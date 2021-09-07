@@ -2,6 +2,7 @@ package post
 
 import (
 	"bytes"
+	"crypto/tls"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -95,6 +96,7 @@ func HTTPProxy(strURL string, buf []byte, strProxy string, strUser string, strPa
 	if err != nil {
 		return nil, err
 	}
+	defer client.CloseIdleConnections()
 	defer resp.Body.Close()
 
 	// 读取 respon
@@ -145,9 +147,46 @@ func Sock5Proxy(strURL string, buf []byte, strProxy string, strUser string, strP
 	if err != nil {
 		return nil, err
 	}
+	defer client.CloseIdleConnections()
 	defer resp.Body.Close()
 
 	// 读取 respon
 	body, _ := ioutil.ReadAll(resp.Body)
+	return body, nil
+}
+
+// Https 地址,
+func Https(strURL, strCertFile, strKeyFile string) ([]byte, error) {
+	// 具体的证书加载对象
+	cliCrt, err := tls.LoadX509KeyPair(strCertFile, strKeyFile)
+	if err != nil {
+		return nil, err
+	}
+
+	// 把上面的准备内容传入 client
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				// RootCAs:      pool,
+				Certificates: []tls.Certificate{cliCrt},
+			},
+		},
+	}
+
+	req, err := http.NewRequest("POST", strURL, strings.NewReader(""))
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer client.CloseIdleConnections()
+	defer resp.Body.Close()
+
+	// 读取 respon
+	body, _ := ioutil.ReadAll(resp.Body)
+
 	return body, nil
 }
