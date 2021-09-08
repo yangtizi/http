@@ -1,0 +1,5 @@
+http
+*.key
+*.p12
+*.pem
+*.pass
