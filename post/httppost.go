@@ -3,6 +3,7 @@ package post
 import (
 	"bytes"
 	"crypto/tls"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -188,4 +189,35 @@ func Https(strURL, strCertFile, strKeyFile string) ([]byte, error) {
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	return body, nil
+}
+
+func MyPost(strURL string, req interface{}, rsp interface{}) error {
+	b, err := json.Marshal(req)
+	if err != nil {
+		return err
+	}
+
+	payload := bytes.NewReader(b)
+
+	r, err := http.NewRequest("POST", strURL, payload)
+	if err != nil {
+		return err
+	}
+
+	r.Header.Add("Accept", "application/json")
+	r.Header.Add("Content-Type", "application/json")
+
+	res, err := http.DefaultClient.Do(r)
+	if err != nil {
+		return err
+	}
+
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(body, rsp)
+	return err
 }
