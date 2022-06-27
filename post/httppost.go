@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	log "github.com/yangtizi/log/zaplog"
-
 	"golang.org/x/net/proxy"
 )
 
