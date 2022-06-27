@@ -1,6 +1,7 @@
 package get
 
 import (
+	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"net/http"
@@ -28,4 +29,26 @@ func Bytes(strURL string) ([]byte, error) {
 	}
 
 	return body, nil
+}
+
+func MyGet(strURL string, rsp interface{}) error {
+	resp, err := http.Get(strURL)
+
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		zaplog.Println(err)
+		return err
+	}
+
+	if resp.StatusCode != 200 {
+		return errors.New(resp.Status)
+	}
+
+	err = json.Unmarshal(body, rsp)
+	return err
 }
