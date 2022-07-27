@@ -92,7 +92,7 @@ func (me *TPostMan) TLS(strCertFile, strKeyFile string) *TPostMan {
 	cliCrt, err := tls.LoadX509KeyPair(strCertFile, strKeyFile)
 
 	if err != nil {
-		zaplog.Errorf("TLS(strCertFile=[%s], strKeyFile=[%s]", strCertFile, strKeyFile)
+		zaplog.Ins.Errorf("TLS(strCertFile=[%s], strKeyFile=[%s]", strCertFile, strKeyFile)
 		return me
 	}
 

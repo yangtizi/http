@@ -3,3 +3,4 @@ http
 *.p12
 *.pem
 *.pass
+*.exe

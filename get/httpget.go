@@ -20,7 +20,7 @@ func Bytes(strURL string) ([]byte, error) {
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		zaplog.Println(err)
+		zaplog.Ins.Errorf("%s", err.Error())
 		return nil, err
 	}
 
@@ -41,7 +41,7 @@ func MyGet(strURL string, rsp interface{}) error {
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		zaplog.Println(err)
+		zaplog.Ins.Errorf("%s", err.Error())
 		return err
 	}
 

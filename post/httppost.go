@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"strings"
 
-	log "github.com/yangtizi/log/zaplog"
+	"github.com/yangtizi/log/zaplog"
 	"golang.org/x/net/proxy"
 )
 
@@ -21,7 +21,7 @@ func JSON(strURL, strJSON string) string {
 		strings.NewReader(strJSON))
 
 	if err != nil {
-		log.Println(err)
+		zaplog.Ins.Errorf("%s", err.Error())
 		return string(err.Error())
 	}
 
@@ -30,7 +30,7 @@ func JSON(strURL, strJSON string) string {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Println(err)
+		zaplog.Ins.Errorf("%s", err.Error())
 		return string(err.Error())
 	}
 
@@ -46,7 +46,7 @@ func Bytes(strURL string, buf []byte) ([]byte, error) {
 		bytes.NewReader(buf))
 
 	if err != nil {
-		log.Println(err)
+		zaplog.Ins.Errorf("%s", err.Error())
 		return nil, err
 	}
 
@@ -55,7 +55,7 @@ func Bytes(strURL string, buf []byte) ([]byte, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Println(err)
+		zaplog.Ins.Errorf("%s", err.Error())
 	}
 
 	// log.Println(string(body))PEv0nLUQnWjFcCiv PEv0nLUQnWjFcCiv PEv0nLUQnWjFcCiv PEv0nLUQnWjFcCiv
@@ -72,10 +72,10 @@ func HTTPProxy(strURL string, buf []byte, strProxy string, strUser string, strPa
 	client := &http.Client{}
 
 	if len(strProxy) > 7 {
-		log.Println("使用代理", urlproxy)
+		zaplog.Ins.Infof("使用代理 = [%v]", urlproxy)
 		client.Transport = &http.Transport{Proxy: http.ProxyURL(urlproxy)}
 	} else {
-		log.Println("不是用代理", strProxy)
+		zaplog.Ins.Infof("不使用代理 %s", strProxy)
 	}
 
 	// 请求
@@ -123,10 +123,10 @@ func Sock5Proxy(strURL string, buf []byte, strProxy string, strUser string, strP
 	client := http.Client{}
 
 	if len(strProxy) > 7 {
-		log.Println("使用代理", strProxy)
+		zaplog.Ins.Infof("使用代理%s", strProxy)
 		client.Transport = &http.Transport{Dial: dialer.Dial}
 	} else {
-		log.Println("不是用代理", strProxy)
+		zaplog.Ins.Infof("不用代理%s", strProxy)
 	}
 
 	// 请求
